@@ -1,0 +1,42 @@
+name: Makora Anime Bot CI  
+
+on:  
+  push:  
+    branches:  
+      - main  
+  pull_request:  
+    branches:  
+      - main  
+  schedule:  
+    - cron: '0 */4 * * *'  # s'exécute toutes les 4 heures  
+
+jobs:  
+  build:  
+
+    runs-on: ubuntu-latest  
+
+    strategy:  
+      matrix:  
+        node-version: [20.x]  
+
+    steps:  
+      - name: Checkout repository  
+        uses: actions/checkout@v3  
+
+      - name: Set up Node.js  
+        uses: actions/setup-node@v3  
+        with:  
+          node-version: ${{ matrix.node-version }}  
+
+      - name: Install dependencies  
+        run: |  
+          npm install  # installe les dépendances du projet  
+
+      - name: Install additional tools  
+        run: |  
+          sudo apt-get update  
+          sudo apt-get install -y ffmpeg  # installation de ffmpeg si nécessaire  
+
+      - name: Start the bot with timeout  
+        run: |  
+          timeout 14520s npm start  # démarre le bot avec un timeout  
